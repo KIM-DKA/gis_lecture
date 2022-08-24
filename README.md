@@ -1,2 +1,2 @@
-# gis_lecture-
-git lecture for hanwha 
+# gis_lecture
+# git lecture for hanwha 

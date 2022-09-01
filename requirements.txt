@@ -1,5 +1,5 @@
 # packages in environment at /Applications/anaconda3/envs/myenv3:
-#
+# python 3.8.2 
 # Name                    Version                   Build  Channel
 appnope                   0.1.2           py38hecd8cb5_1001  
 asttokens                 2.0.5              pyhd3eb1b0_0  

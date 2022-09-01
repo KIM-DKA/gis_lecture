@@ -5,16 +5,27 @@ import os
 import sys 
 import numpy as np 
 import pandas as pd 
-import geopandas as gpd
 import importlib
 import openpyxl
+import matplotlib.pyplot as plt 
 from time import time 
 
+import descartes
+import geopandas as gpd
+import shapely
+
+
 file_path = './shape/ulsan/'
-file_nm = os.listdir('./shape/ulsan')[1]
+file_nm = os.listdir('./shape/ulsan')
+file_nm 
+file_path + file_nm[0] 
+file_nm
 
-file_path + file_nm 
+file_path + file_nm[0]
+temp = gpd.read_file(file_path+file_nm[0],encoding='euc-kr')
 
-temp = gpd.read_file(file_path+file_nm)
+temp.head()
 
+temp.plot()
 
+plt.show()

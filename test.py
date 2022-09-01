@@ -33,4 +33,8 @@ help(pd.read_excel)
 _ = pd.ExcelFile(file_path + file_nm[0])
 
 
+os.listdir('/Users/dk/Downloads/SIG_20220324/sig.shp')
 
+
+
+/Users/dk/Downloads/SIG_20220324

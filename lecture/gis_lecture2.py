@@ -1,9 +1,12 @@
 # gis_lecture2.py 
-# python 3.8.2 
+# python 3.8.13
 
 '''
-- 구글지도 API 사용법
-- Geo pandas 사용하기 
+[folinum 사용법](https://cow97.tistory.com/34)
+[geopandas 사용법](https://yganalyst.github.io/spatial_analysis/spatial_analysis_2/)
+
+[Geo pandas 설치]() 
+	0) geopandas 사용법 
 	1) shp 파일 불러오기 
 	2) 엑셀파일 불러오기 
 	3) 속성테이블 확인 
@@ -15,4 +18,12 @@
 
 '''
 	
+
+import os 
+import sys 
+import pandas as pd 
+import numpy as np
+import matplotlib.pyplot as plt 
+import geopandas as gpd 
+import folium
 

@@ -8,7 +8,8 @@
 [folinum 사용법](https://cow97.tistory.com/34)
 [shp 파일 다운로드](http://www.gisdeveloper.co.kr/?p=2332)                                                                                                                                                                                                                                                                                                                                                                                                                                                         ㅡ
 
-	0) geopandas 설치 
+	0) geopandas 설치
+		* conda forge 채널 설정 
 
 	1) shp 파일 불러오기
 		* 저번 파일에 행정동 코드가 국가 통계코드로 행정동 코드(8자리 데이터 사용) 
@@ -38,16 +39,15 @@
 	6) 공간데이터 활용하기 
 		1. buffer 
 		2. envelope
-		3. unary_union 
-		4. dissolve 
-		5. overlay [Intersection, Union, Symetrical Difference, Difference]
-		6. Spatial Join 
+		3. dissolve 
+		4. overlay [Intersection, Union, Symetrical Difference, Difference]
+		5. Spatial Join 
 
-	7) folium 패키지로 시각화 하기 
+	7) 결과물 저장(write)하기
 
-	8) 결과물 shp 파일로 write 하기 
+	8) reference
 
-	9) 
+	9) 다음 주제  
 
 
 """
@@ -165,9 +165,9 @@ korea_st_buck_data = gpd.GeoDataFrame(
 
 korea_st_buck_data = korea_st_buck_data[
 	[
-	'spot',
-	'address',
-	'geometry'
+		'spot',
+		'address',
+		'geometry'
 	]
 ]
 
@@ -218,6 +218,8 @@ seoul_st_buck_data = korea_st_buck_data[adr_cond]
 
 seoul_sido_shp.plot(edgecolor='black')
 seoul_sig_shp.plot(edgecolor='black')
+plt.show()
+
 
 
 ### boundary 확인 
@@ -225,7 +227,6 @@ seoul_sig_shp.plot(edgecolor='black')
 ax = seoul_adm_shp.plot(color='black')
 seoul_adm_shp.geometry.boundary.plot(ax=ax,color='white',linewidth=0.5)
 seoul_adm_shp.plot(color='gray',alpha=1,edgecolor='black')
-plt.show() 
 
 seoul_adm_shp.geometry.boundary.coords
 
@@ -242,11 +243,12 @@ seoul_adm_shp[valid_cond]
 
 # 4-6) 유효한 도형으로 만들기 
 
-seoul_adm_shp['geometry'] = seoul_adm_shp.buffer(1)
+seoul_adm_shp['geometry'] = seoul_adm_shp.buffer(0)
 
 len(seoul_adm_shp.geometry.is_valid)
 sum(seoul_adm_shp.geometry.is_valid)
 seoul_adm_shp.geometry.is_valid # 모든 폴리곤이 valid 한 폴리곤이 되었음 
+
 
 
 # 5. Shapely 사용법 
@@ -255,157 +257,163 @@ seoul_adm_shp.geometry.is_valid # 모든 폴리곤이 valid 한 폴리곤이 되
 
 # 5-1) Point 
 
-p1 = Point(
+p1_pt = Point(
 	[1,1],
 )
 
-p1 = gpd.GeoDataFrame(
-	{'geometry': p1},
+p1_gdf = gpd.GeoDataFrame(
+	{'geometry': p1_pt},
 	index = [0]
 )
 
 
-p1.plot()
+p1_gdf.plot()
 plt.show()
 
 # 5-2) MultiPoint 
 
 ## 방법1 : MultiPoint 함수 이용 
 
-p2 = MultiPoint(
+p2_mpt = MultiPoint(
 	[
-	(0,0),
-	(1,1)	
+		(0,0),
+		(1,1)	
 	]
 )
 
 
-p2 = gpd.GeoDataFrame(
+p2_gdf = gpd.GeoDataFrame(
 	{
-	'geometry': p2
+		'geometry': p2_mpt
 	},
 	index = [0,1]
 )
 
-p2.plot()
+p2_gdf.plot()
 plt.show()
 
 ## 방법2 : GeoSerires 사용 (개인적으론 Index 를 안줘도 되는 이 방법을 추천)
 
-p3 = gpd.GeoSeries(
+p3_sr = gpd.GeoSeries(
 	[
-	Point([0,0]),
-	Point([1,1])
+		Point([0,0]),
+		Point([1,1])
 	]
 )
 
 
-p3 = gpd.GeoDataFrame(
+p3_gdf = gpd.GeoDataFrame(
 	{
-	'geometry': p2
+		'geometry': p3_sr
 	}
 )
 
-
-p2.plot()
+p3_gdf.plot()
 plt.show()
 
 # 5-2) LineString 
 
-l1 = gpd.GeoSeries(
+l1_sr = gpd.GeoSeries(
 	[
-	LineString([(0,0),(10,10)])	
+		LineString([(0,0),(10,10)])	
 	]
 )
 
-l1.plot()
+l1_sr.plot()
 plt.show()
 
 # 5-3) MultiLine 
 # MultiLine 함수는 안써도 되는데 
 
-l2 = MultiLineString(
+l2_sr = MultiLineString(
 	[
-	[(0,0),(10,10)],
-	[(0,10),(10,0)]	
+		[(0,0),(10,10)],
+		[(0,10),(10,0)]	
 	]
 )
 
-l2 = gpd.GeoDataFrame(
+l2_gdf = gpd.GeoDataFrame(
 	{
-	'geometry': l2	
+		'geometry': l2_sr	
 	}, 
 	index = [0,1]
 )
 
-l2.plot()
+l2_gdf.plot()
 plt.show()
 
 ## 추천하는 방법 
 
-l3 = gpd.GeoSeries(
+l3_sr = gpd.GeoSeries(
 	[
-	LineString([(0,0),(10,10)]),
-	LineString([(0,10),(10,0)])		
+		LineString([(0,0),(10,10)]),
+		LineString([(0,10),(10,0)])		
 	]
 )
 
-l3.plot()
+l3_gdf = gpd.GeoDataFrame(
+	{
+		'geometry': l3_sr
+	}
+
+)
+
+
+l3_gdf.plot()
 plt.show()
 
 # 5-4) Polygon
 ## Polygon 안 list 의 tuple(point) 순서에 따라 그림이 다르게 그려짐 
 
 ### 정사각형 
-poly1 = gpd.GeoSeries(
+
+poly1_sqr_sr = gpd.GeoSeries(
 	[
-	Polygon([(0,0),(10,0),(10,10),(0,10)])
+		Polygon([(0,0),(10,0),(10,10),(0,10)])
 	] 
 )
 
 
-poly1 = gpd.GeoDataFrame(
+poly1_sqr_gdf = gpd.GeoDataFrame(
 	{
-	'geometry': poly1	
+		'geometry': poly1_sqr_sr	
 	}
 )
 
 
-poly1.plot()
+poly1_sqr_gdf.plot()
 plt.show()
 
 
 ### 모래시계 모양 
 
-poly2 = gpd.GeoSeries(
+poly2_hglas_sr = gpd.GeoSeries(
 	[
-	Polygon([(0,0),(10,0),(0,10),(10,10)])
+		Polygon([(0,0),(10,0),(0,10),(10,10)])
 	]
 )
 
-poly2.plot()
+poly2_hglas_sr.plot()
 plt.show()
-
-
 
 # 5-5) MultiPolygon 
 
 # 추천 방법 
 
-poly3 = gpd.GeoSeries(
+poly3_gsr = gpd.GeoSeries(
 	[
-	Polygon([(0,0),(10,0),(5,5)]),
-	Polygon([(5,5),(0,10),(10,10)])
+		Polygon([(0,0),(10,0),(5,5)]),
+		Polygon([(5,5),(0,10),(10,10)])
 	]
 )
 
-poly3 = gpd.GeoDataFrame(
+poly3_gdf = gpd.GeoDataFrame(
 	{
-	'geometry': poly3
+		'geometry': poly3_gsr
 	}
 )
 
-poly3.plot()
+poly3_gdf.plot()
 plt.show()
 
 # 6. 공간데이터 활용하기 
@@ -414,47 +422,59 @@ plt.show()
 
 # 500m 정사각형과 지름이 500미터인 원 그리기 
 
-sqaure_500m = gpd.GeoSeries(
+poly_square_500m_gsr = gpd.GeoSeries(
 	[
-	Polygon([(0,0),(500,0),(500,500),(0,500)])
+		Polygon([(0,0),(500,0),(500,500),(0,500)])
 	]
 )
 
-circle_500m = gpd.GeoSeries(
+poly_square_500m_gdf = gpd.GeoDataFrame(
+	{
+		'gemotry':poly_square_500m_gsr
+	}
+)
+
+
+pt_circle_gsr = gpd.GeoSeries(
 	[
-	Point([250,250])
+		Point([250,250])
 	]
 )
 
-circle_500m.buffer(250)
+pt_circle_gdf = gpd.GeoDataFrame(
+	{
+		'geometry': pt_circle_gsr
+	}
+)
 
 
-ax = sqaure_500m.plot()
-circle_500m.buffer(250).plot(color='gray',ax=ax)
-circle_500m.plot(color='black',ax=ax)
+ax = poly_square_500m_gsr.plot()
+pt_circle_gsr.buffer(250).plot(color='gray',ax=ax)
+pt_circle_gsr.plot(color='black',ax=ax)
 plt.show()
 
 # 6-2) envelope : 도형을 감싸는 사각형을 그려줌 
-# 중심점이 100,100 인 점을 하나 추가해줌 
+# 중심점이 100,100 인 점을 하나 추가해줌, 여기서 부터는 GeoSeries 를 따로 선언 안하고 바로 지오 데이터 프레임으로 만듬 
 
-circle_100m = gpd.GeoSeries(
-	[
-	Point([100,100])
-	]
+
+add_two_point = gpd.GeoDataFrame(
+	{
+		'geometry': [Point(100,100),Point(200,200)]
+	}
 )
 
-circle = pd.concat(
+pt_circle_add_pt_gdf = pd.concat(
 	[
-	circle_500m,
-	circle_100m
+		pt_circle_gdf,
+		add_two_point
 	],
-	axis=0
+	ignore_index=True
 )
 
-ax = circle.buffer(50).envelope.plot()
-circle.buffer(50).plot(color='gray',ax=ax)
-circle.plot(color='black',ax=ax)
 
+
+ax = pt_circle_add_pt_gdf.buffer(10).plot(edgecolor='black')
+pt_circle_add_pt_gdf.buffer(10).envelope.plot(ax=ax,color='gray',alpha=0.5,edgecolor='black')
 plt.show()
 
 # 6-3) dissolve 
@@ -465,14 +485,104 @@ plt.show()
 
 seoul_adm_shp['group'] = seoul_adm_shp.adm_cd.str[0:5] 
 
-ax = seoul_sig_shp.plot(edgecolor='red')
-seoul_adm_shp.dissolve(by='group').plot(edgecolor='black',ax=ax)
+ax = seoul_sig_shp.plot(edgecolor='black')
+seoul_adm_shp.dissolve(by='group').plot(ax=ax,color='red',alpha=0.5,edgecolor='black')
+
+# 해결책 
+# 아주 작은 숫자 버퍼 주기 (연결되지 않은 도형 연결해 주기)
+
+
+seoul_adm_shp['geometry'] = seoul_adm_shp.buffer(0.1)
+
+seoul_adm_shp.dissolve(by='group').plot(color='red',alpha=0.5,edgecolor='black')
 
 plt.show()
 
 # 분명 시군구로 디졸브 했는데 왜이렇게 이상하게 합쳐졌을까? 
-# 바로 유효하지 않은 도형이기 때문이다. 
+# 바로 유효하지 않은 도형이기 때문이다. 저번 강의처럼 버퍼를 줘서유효한 도형으로 만들면 행정동의 디졸브가 시군구의 디졸브와 같아짐 
+
+# 6-4) overlay : 도형끼리 겹치는 부분 처리하기 
+# 사다리꼴은 한강으로 가정 
+# 사각형은 땅으로 가정 
+
+land_gdf = gpd.GeoDataFrame(
+	{
+		'geometry': [
+			Polygon([(0,0),(2,0),(2,2),(0,2)])
+		]
+	}
+)
+
+river_gdf = gpd.GeoDataFrame(
+	{
+		'geometry': [
+			Polygon([(0,1),(1,0),(3,2),(2,3)])
+		]
+	}
+)
+
+ax = land_gdf.plot(color='brown',edgecolor='black',alpha=0.5)
+
+river_gdf.plot(ax=ax,color='blue',edgecolor='blue',alpha=0.5)
+
+plt.show()
+
+# Union (합집합)
+
+poly_union_gdf = gpd.overlay(
+	land_gdf,
+	river_gdf,
+	how = 'union'
+)
+
+
+poly_union_gdf.plot(edgecolor='black')
+plt.show()
+
+
+# Intersect (교집합)
+
+poly_intersect_gdf = gpd.overlay(
+	land_gdf,
+	river_gdf,
+	how = 'intersection'
+)
+
+ax = poly_union_gdf.plot(edgecolor='black')
+
+poly_intersect_gdf.plot(ax=ax,color='red',edgecolor='black')
+plt.show()
+
+# Symmetric difference (여집합)
+
+poly_sym_diff_gdf = gpd.overlay(
+	land_gdf,
+	river_gdf,
+	how = 'symmetric_difference'
+)
+
+ax = poly_union_gdf.plot(edgecolor='black')
+
+poly_sym_diff_gdf.plot(ax=ax,color='red',edgecolor='black')
+plt.show()
+
+
+# difference (차집합)
+
+poly_diff_gdf = gpd.overlay(
+	land_gdf,
+	river_gdf,
+	how = 'difference'
+)
+
+ax = poly_union_gdf.plot(edgecolor='black')
+
+poly_diff_gdf.plot(ax=ax,color='red',edgecolor='black')
+plt.show()
+
+# 
 
 
 
-# 다음주는 공간통계 기법, 분석을 낙동강 수질 예측에 적용 (업무 + 교육용)
+# 7. 결과물 저장하기 
+# 1) seoul 결과물 저장하기 

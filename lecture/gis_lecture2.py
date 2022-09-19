@@ -166,22 +166,21 @@ korea_st_buck_gdf = gpd.GeoDataFrame(
 )
 
 
-temp = korea_st_buck_gdf.copy
-# 변수 버리는거 drop 함수 사용하기 
+temp = korea_st_buck_gdf.copy()
+temp.head()
+
+temp.drop(
+	columns = ['lat','long'],
+	inplace = True
+)
 
 
 # 안쓰는 컬럼 버리기 
 
-korea_st_buck_gdf = korea_st_buck_gdf[
-	[
-		'spot',
-		'address',
-		'geometry'
-	]
-]
-
-korea_st_buck_gdf 
-
+korea_st_buck_gdf = korea_st_buck_gdf.drop(
+	columns = ['lat','long'],
+	inplace = True
+)
 
 ## init 좌표계 부여 (csv)
 
@@ -263,9 +262,6 @@ seoul_adm_shp.geometry.is_valid # 모든 폴리곤이 valid 한 폴리곤이 되
 
 
 # 5. Shapely 사용법 
-
-
-
 # 5-1) Point 
 
 p1_pt = Point(
@@ -385,7 +381,7 @@ poly1_sqr_sr = gpd.GeoSeries(
 )
 
 
-poly1_sqr_gdf = gpd.GeoDataFrame(
+poly1_sqr_gdf = gpd.GeoDataFrame(x
 	{
 		'geometry': poly1_sqr_sr	
 	}
@@ -482,8 +478,6 @@ pt_circle_add_pt_gdf = pd.concat(
 	ignore_index=True
 )
 
-
-
 ax = pt_circle_add_pt_gdf.buffer(10).plot(edgecolor='black')
 pt_circle_add_pt_gdf.buffer(10).envelope.plot(ax=ax,color='gray',alpha=0.5,edgecolor='black')
 plt.show()
@@ -561,8 +555,6 @@ poly_intersect_gdf = gpd.overlay(
 	how = 'intersection'
 )
 
-poly_intersect_gdf
-
 ax = poly_union_gdf.plot(edgecolor='black')
 
 poly_intersect_gdf.plot(ax=ax,color='red',edgecolor='black')
@@ -603,21 +595,44 @@ plt.show()
 # contain : 포함하는가 
 # 사실상 같은 의미이나 매개변수의 순서를 어떻게 하느냐에 따라 달라짐 
 
+# Point 데이터 생성 
 
-
-merge_contain_gdf = gpd.sjoin(
-	seoul_adm_shp, 
-	seoul_st_buck_data
+pt_spot_gdf = gpd.GeoDataFrame(
+	{
+		'geometry': MultiPoint(
+			[
+				(1,1),
+				(3,1),
+				(3,2),
+				(2,2),
+				(1,3),
+				(3.5,3.5)
+			]
+		)
+	}
 )
 
+pt_spot_x = pt_spot_gdf.geometry.x
+pt_spot_y = pt_spot_gdf.geometry.y
+
+ax = poly_land_gdf.plot(color='brown',edgecolor='black',alpha=0.5)
+poly_river_gdf.plot(ax=ax,color='blue',edgecolor='blue',alpha=0.5)
+pt_spot_gdf.plot(ax=ax,color='black',markersize=5)
+
+for idx, xy_coord in enumerate(zip(pt_spot_x,pt_spot_y)):
+	plt.text(
+		xy_coord[0],
+		xy_coord[1],
+		idx
+	)
+
+plt.show()
 
 
+# plt.tex t(pt_spot_gdf.geometry.x,pt_spot_gdf.geometry.y,['1','2','3','4','5','6'])
 
-
-
-
-
-
+x = pt_spot_gdf.geometry.x
+y = pt_spot_gdf.geometry.y
 
 seoul_adm_shp.head()
 seoul_st_buck_data.head()
@@ -625,7 +640,6 @@ seoul_st_buck_data.head()
 ax = seoul_adm_shp.plot(edgecolor='black')
 seoul_st_buck_data.plot(ax=ax,color='black',markersize=5)
 plt.show()
-
 
 
 # 1) seoul 결과물 저장하기 

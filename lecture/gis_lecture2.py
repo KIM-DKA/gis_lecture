@@ -41,13 +41,18 @@
 		2. envelope
 		3. dissolve 
 		4. overlay [Intersection, Union, Symetrical Difference, Difference]
-		5. Spatial Join 
+	
+	7) 공간 결합 
 
-	7) 결과물 저장(write)하기
+	8) 결과물 저장(write)하기
 
-	8) reference
+	9) reference
 
-	9) 다음 주제  
+	10) 다음 주제  
+		1. fiona 라이브러리를 통한 시각화 
+		2. 공간통계 
+
+		
 
 
 """
@@ -77,7 +82,6 @@ korea_sido_shp = gpd.read_file(
 	file_path + '/korea_sido_shp/ctp_rvn.shp',
 	encoding='EUC-KR'
 )
-
 
 # 시군구 
 korea_sig_shp = gpd.read_file(
@@ -156,20 +160,27 @@ korea_st_buck_data['geometry'] = korea_st_buck_data.apply(
 	axis=1
 )
 
-korea_st_buck_data = gpd.GeoDataFrame(
+korea_st_buck_gdf = gpd.GeoDataFrame(
 	korea_st_buck_data,
 	geometry = 'geometry'
 )
 
+
+temp = korea_st_buck_gdf.copy
+# 변수 버리는거 drop 함수 사용하기 
+
+
 # 안쓰는 컬럼 버리기 
 
-korea_st_buck_data = korea_st_buck_data[
+korea_st_buck_gdf = korea_st_buck_gdf[
 	[
 		'spot',
 		'address',
 		'geometry'
 	]
 ]
+
+korea_st_buck_gdf 
 
 
 ## init 좌표계 부여 (csv)
@@ -505,15 +516,17 @@ plt.show()
 # 사다리꼴은 한강으로 가정 
 # 사각형은 땅으로 가정 
 
-land_gdf = gpd.GeoDataFrame(
+poly_land_gdf = gpd.GeoDataFrame(
 	{
 		'geometry': [
-			Polygon([(0,0),(2,0),(2,2),(0,2)])
+			Polygon([(0,0),(2,0),(2,2),(0,2)]),
+			Polygon([(3,3),(4,3),(4,4),(3,4)])
+			
 		]
 	}
 )
 
-river_gdf = gpd.GeoDataFrame(
+poly_river_gdf = gpd.GeoDataFrame(
 	{
 		'geometry': [
 			Polygon([(0,1),(1,0),(3,2),(2,3)])
@@ -521,17 +534,17 @@ river_gdf = gpd.GeoDataFrame(
 	}
 )
 
-ax = land_gdf.plot(color='brown',edgecolor='black',alpha=0.5)
+ax = poly_land_gdf.plot(color='brown',edgecolor='black',alpha=0.5)
 
-river_gdf.plot(ax=ax,color='blue',edgecolor='blue',alpha=0.5)
+poly_river_gdf.plot(ax=ax,color='blue',edgecolor='blue',alpha=0.5)
 
 plt.show()
 
 # Union (합집합)
 
 poly_union_gdf = gpd.overlay(
-	land_gdf,
-	river_gdf,
+	poly_land_gdf,
+	poly_river_gdf,
 	how = 'union'
 )
 
@@ -543,10 +556,12 @@ plt.show()
 # Intersect (교집합)
 
 poly_intersect_gdf = gpd.overlay(
-	land_gdf,
-	river_gdf,
+	poly_land_gdf,
+	poly_river_gdf,
 	how = 'intersection'
 )
+
+poly_intersect_gdf
 
 ax = poly_union_gdf.plot(edgecolor='black')
 
@@ -556,8 +571,8 @@ plt.show()
 # Symmetric difference (여집합)
 
 poly_sym_diff_gdf = gpd.overlay(
-	land_gdf,
-	river_gdf,
+	poly_land_gdf,
+	poly_river_gdf,
 	how = 'symmetric_difference'
 )
 
@@ -570,8 +585,8 @@ plt.show()
 # difference (차집합)
 
 poly_diff_gdf = gpd.overlay(
-	land_gdf,
-	river_gdf,
+	poly_land_gdf,
+	poly_river_gdf,
 	how = 'difference'
 )
 
@@ -580,9 +595,37 @@ ax = poly_union_gdf.plot(edgecolor='black')
 poly_diff_gdf.plot(ax=ax,color='red',edgecolor='black')
 plt.show()
 
-# 
+# 7. Spatial Join 
+
+# op = [within,contain,intersects,crosses,distance]
+
+# within : 안에 있는가? 
+# contain : 포함하는가 
+# 사실상 같은 의미이나 매개변수의 순서를 어떻게 하느냐에 따라 달라짐 
 
 
 
-# 7. 결과물 저장하기 
+merge_contain_gdf = gpd.sjoin(
+	seoul_adm_shp, 
+	seoul_st_buck_data
+)
+
+
+
+
+
+
+
+
+
+
+seoul_adm_shp.head()
+seoul_st_buck_data.head()
+
+ax = seoul_adm_shp.plot(edgecolor='black')
+seoul_st_buck_data.plot(ax=ax,color='black',markersize=5)
+plt.show()
+
+
+
 # 1) seoul 결과물 저장하기 

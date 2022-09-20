@@ -641,5 +641,8 @@ ax = seoul_adm_shp.plot(edgecolor='black')
 seoul_st_buck_data.plot(ax=ax,color='black',markersize=5)
 plt.show()
 
+# spatial join 
+
+
 
 # 1) seoul 결과물 저장하기 

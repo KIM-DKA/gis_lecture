@@ -644,5 +644,8 @@ plt.show()
 # spatial join 
 
 
+# op = [within,contain,intersects,crosses,distance]
+
+
 
 # 1) seoul 결과물 저장하기 

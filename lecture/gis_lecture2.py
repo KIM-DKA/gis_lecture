@@ -43,6 +43,10 @@
 		4. overlay [Intersection, Union, Symetrical Difference, Difference]
 	
 	7) 공간 결합 
+		1. within
+		2. contain
+		3. intersects 
+		4. distance 
 
 	8) 결과물 저장(write)하기
 
@@ -628,8 +632,10 @@ for idx, xy_coord in enumerate(zip(pt_spot_x,pt_spot_y)):
 
 plt.show()
 
+# Spatial Join 
 
-# plt.tex t(pt_spot_gdf.geometry.x,pt_spot_gdf.geometry.y,['1','2','3','4','5','6'])
+
+
 
 x = pt_spot_gdf.geometry.x
 y = pt_spot_gdf.geometry.y
@@ -642,6 +648,36 @@ seoul_st_buck_data.plot(ax=ax,color='black',markersize=5)
 plt.show()
 
 # spatial join 
+
+## within 
+
+poly_land_cont_river_gdf = gpd.sjoin(
+	poly_land_gdf,
+	pt_spot_gdf,
+	how = 'left',
+	op = 'contains'
+)
+
+poly_land_cont_river_gdf.index_right
+
+pt_spot_gdf.iloc[poly_land_cont_river_gdf.index_right,:]
+
+plt.show()
+
+
+
+poly_land_cont_river_gdf = gpd.sjoin(
+	poly_land_gdf,
+	pt_spot_gdf,
+	how = 'left',
+	op = 'contains'
+)
+
+
+temp 
+
+
+
 
 
 # op = [within,contain,intersects,crosses,distance]

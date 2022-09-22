@@ -6,7 +6,8 @@
 [Geo pandas 설치]() -> conda-forge channel add 하기 추가 
 [Shapely 사용법](https://programmerpsy.tistory.com/104)
 [folinum 사용법](https://cow97.tistory.com/34)
-[shp 파일 다운로드](http://www.gisdeveloper.co.kr/?p=2332)                                                                                                                                                                                                                                                                                                                                                                                                                                                         ㅡ
+[shp 파일 다운로드](http://www.gisdeveloper.co.kr/?p=2332)        
+[plotly 에 geopandas 올리기](https://stackoverflow.com/questions/65507374/plotting-a-geopandas-dataframe-using-plotly)                                                                                                                                                                                                                                                                                                                                                                                                                                                 ㅡ
 
 	0) geopandas 설치
 		* conda forge 채널 설정 

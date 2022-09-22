@@ -1,5 +1,6 @@
 # gis_lecture2.py 
-# python 3.10.6
+# python 3.8.13 
+
 
 """
 [geopandas 사용법](https://yganalyst.github.io/spatial_analysis/spatial_analysis_2/)
@@ -80,7 +81,6 @@ from shapely.geometry import Point, MultiPoint, LineString, MultiLineString, Pol
 file_path = '/Applications/anaconda3/envs/gis_env/git/shape/data'
 
 os.listdir(file_path)
-
 
 # 시도 
 korea_sido_shp = gpd.read_file(
@@ -171,14 +171,6 @@ korea_st_buck_gdf = gpd.GeoDataFrame(
 )
 
 
-temp = korea_st_buck_gdf.copy()
-temp.head()
-
-temp.drop(
-	columns = ['lat','long'],
-	inplace = True
-)
-
 
 # 안쓰는 컬럼 버리기 
 
@@ -198,6 +190,8 @@ korea_sig_shp = korea_sig_shp.to_crs({'init': 'epsg:5179'})
 korea_adm_shp = korea_adm_shp.to_crs({'init': 'epsg:5179'})
 
 korea_st_buck_data = korea_st_buck_data.to_crs({'init': 'epsg:5179'})
+
+
 
 # 4) Geopandas object 속성
 
@@ -594,7 +588,7 @@ plt.show()
 
 # 7. Spatial Join 
 
-# op = [within,contain,intersects,crosses,distance]
+# predicate = [within,contain,intersects,crosses,distance]
 
 # within : 안에 있는가? 
 # contain : 포함하는가 
@@ -633,56 +627,104 @@ for idx, xy_coord in enumerate(zip(pt_spot_x,pt_spot_y)):
 
 plt.show()
 
-# Spatial Join 
+def plot_sjoin(pt_gdf,poly_join_gdf):
+
+	"""
+	pt_gdf : point data 
+	poly_join_gdf : joined geo data frame 
+	"""
+
+	spot_idx = pt_gdf.iloc[poly_join_gdf.index_right,:].index
+	spot_x = pt_gdf.iloc[poly_join_gdf.index_right,:].geometry.x
+	spot_y = pt_gdf.iloc[poly_join_gdf.index_right,:].geometry.y 
+
+	ax = poly_join_gdf.plot(edgecolor='black',alpha=0.5)
+
+	pt_gdf.iloc[poly_join_gdf.index_right,:].plot(ax=ax,color='black',markersize=5)
+
+	for idx,x,y in zip(spot_idx,spot_x,spot_y):
+		plt.text(
+			x,
+			y,
+			idx
+		)
+	
+	return plt.show()
 
 
-
-
-x = pt_spot_gdf.geometry.x
-y = pt_spot_gdf.geometry.y
-
-seoul_adm_shp.head()
-seoul_st_buck_data.head()
-
-ax = seoul_adm_shp.plot(edgecolor='black')
-seoul_st_buck_data.plot(ax=ax,color='black',markersize=5)
-plt.show()
+# predicate = [within,contain,intersects,crosses]
+# 1) seoul 결과물 저장하기 
 
 # spatial join 
 
-## within 
+## within left 가 right 를 포함하는가? 
+# 빨간색 영역이 0과 5를 포함한다고 판단 
 
-poly_land_cont_river_gdf = gpd.sjoin(
+poly_land_cont_gdf = gpd.sjoin(
 	poly_land_gdf,
 	pt_spot_gdf,
 	how = 'left',
-	op = 'contains'
+	predicate = 'contains'
 )
 
-poly_land_cont_river_gdf.index_right
+# 실제 살아남은 점들 
+plot_sjoin(
+	pt_spot_gdf,
+	poly_land_cont_gdf
+)
 
-pt_spot_gdf.iloc[poly_land_cont_river_gdf.index_right,:]
+poly_land_within_gdf = gpd.sjoin(
+	pt_spot_gdf,
+	poly_land_gdf,
+	how = 'left',
+	predicate = 'within'
+)
+
+# 포함 관계를 잘 파악하여 작업 할 것 
+
+
+poly_land_inter_gdf = gpd.sjoin(
+	poly_land_gdf,
+	pt_spot_gdf,
+	how = 'left',
+	predicate = 'intersects'
+)
+
+
+poly_land_inter_gdf 
+
+plot_sjoin(
+	pt_spot_gdf,
+	poly_land_inter_gdf
+)
+
+
+# cross 
+
+poly_land_cross_gdf = gpd.sjoin(
+	poly_land_gdf,
+	pt_spot_gdf,
+	how = 'left',
+	predicate = 'crosses'
+)
+
+
+poly_land_cross_gdf 
+
+# land 와 river 를 결합하고 싶다면 어떻게 해야할까? 이럴 때는 두 polygon 이 intersect 한 것을 추출해 주지 
+
+poly_land_river_inter_gdf = gpd.sjoin(
+	poly_land_gdf, 
+	poly_river_gdf,
+	how = 'inner',
+	predicate = 'intersects'
+)
+
+
+ax = poly_land_river_inter_gdf.plot(color='brown',edgecolor='black',alpha=0.5)
+
+poly_river_gdf.plot(ax=ax,color='blue',edgecolor='blue',alpha=0.5)
 
 plt.show()
 
 
-
-poly_land_cont_river_gdf = gpd.sjoin(
-	poly_land_gdf,
-	pt_spot_gdf,
-	how = 'left',
-	op = 'contains'
-)
-
-
-temp 
-
-
-
-
-
-# op = [within,contain,intersects,crosses,distance]
-
-
-
-# 1) seoul 결과물 저장하기 

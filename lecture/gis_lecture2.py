@@ -174,7 +174,7 @@ korea_st_buck_gdf = gpd.GeoDataFrame(
 
 # 안쓰는 컬럼 버리기 
 
-korea_st_buck_gdf = korea_st_buck_gdf.drop(
+korea_st_buck_gdf.drop(
 	columns = ['lat','long'],
 	inplace = True
 )
@@ -199,7 +199,7 @@ korea_st_buck_data = korea_st_buck_data.to_crs({'init': 'epsg:5179'})
 # '도' 좌표계에서는 면적과 길이등이 제대로 계산이 안되므로 정확한 계산을 위해서는 '미터' 좌표계로 변경 
 korea_adm_shp.geometry.area 
 
-korea_adm_shp.geometry.area
+korea_adm_shp.geometry.aread
 
 # 4-2) 길이 (테두리의 길이 반환)
 
@@ -399,8 +399,19 @@ poly2_hglas_sr = gpd.GeoSeries(
 	]
 )
 
+
+poly2_gdf = gpd.GeoDataFrame(
+	{
+		'geometry': poly2_hglas_sr
+	}
+)
+
 poly2_hglas_sr.plot()
+
 plt.show()
+
+
+
 
 # 5-5) MultiPolygon 
 
@@ -726,5 +737,7 @@ ax = poly_land_river_inter_gdf.plot(color='brown',edgecolor='black',alpha=0.5)
 poly_river_gdf.plot(ax=ax,color='blue',edgecolor='blue',alpha=0.5)
 
 plt.show()
+
+
 
 

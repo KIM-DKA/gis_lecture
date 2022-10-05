@@ -72,8 +72,7 @@ import geopandas as gpd
 import folium
 from shapely.geometry import Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon
 
-
-import pandas_profiling 
+from pandas_profiling import ProfileReport
 
 # 1) shp 파일 불러오기
 

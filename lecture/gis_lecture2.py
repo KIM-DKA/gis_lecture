@@ -638,18 +638,19 @@ for idx, xy_coord in enumerate(zip(pt_spot_x,pt_spot_y)):
 
 plt.show()
 
-def plot_sjoin(pt_gdf,poly_join_gdf):
+def plot_ord_sjoin(pt_gdf,poly_join_gdf,col):
 
 	"""
 	pt_gdf : point data 
-	poly_join_gdf : joined geo data frame 
+	poly_join_gdf : joined geo data frame
+	col : color string 
 	"""
 
 	spot_idx = pt_gdf.iloc[poly_join_gdf.index_right,:].index
 	spot_x = pt_gdf.iloc[poly_join_gdf.index_right,:].geometry.x
 	spot_y = pt_gdf.iloc[poly_join_gdf.index_right,:].geometry.y 
 
-	ax = poly_join_gdf.plot(edgecolor='black',alpha=0.5)
+	ax = poly_join_gdf.plot(edgecolor=col,alpha=0.5)
 
 	pt_gdf.iloc[poly_join_gdf.index_right,:].plot(ax=ax,color='black',markersize=5)
 
@@ -679,7 +680,7 @@ poly_land_cont_gdf = gpd.sjoin(
 )
 
 # 실제 살아남은 점들 
-plot_sjoin(
+plot_ord_sjoin(
 	pt_spot_gdf,
 	poly_land_cont_gdf
 )
@@ -704,7 +705,7 @@ poly_land_inter_gdf = gpd.sjoin(
 
 poly_land_inter_gdf 
 
-plot_sjoin(
+plot_ord_sjoin(
 	pt_spot_gdf,
 	poly_land_inter_gdf
 )
@@ -745,3 +746,4 @@ plt.show()
 
 
 plt.rcParams['font.family']
+

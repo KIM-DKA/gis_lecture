@@ -73,6 +73,7 @@ import folium
 from shapely.geometry import Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon
 
 
+import pandas_profiling 
 
 # 1) shp 파일 불러오기
 
@@ -741,9 +742,4 @@ plt.show()
 
 
 ####
-
-
-
-
-plt.rcParams['font.family']
 

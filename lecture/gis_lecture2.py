@@ -78,7 +78,8 @@ from pandas_profiling import ProfileReport
 
 # load shp file and csv file 
 
-file_path = '/Applications/anaconda3/envs/gis_env/git/shape/data'
+
+file_path = '/shape/data'
 
 os.listdir(file_path)
 

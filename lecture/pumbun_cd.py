@@ -36,19 +36,19 @@ import re
 os.chdir('/Users/dk/Documents')
 
 
-pumbun_df = pd.read_excel(
-	io='PUMBUN_CD ???????.xlsx',
+pumbun_df = pd.read_csv(
+	'PUMBUN_CD ???????_1차_정리.txt',
+	usecols = ['bef_pumbun_cd','bef_pumbun_nm'],
+	dtype=str
 )
 
-pumbun_nm = list(pumbun_df['품번'])
-pumbun_cd = list(pumbun_df['품번코드'])
+pumbun_nm = list(pumbun_df['bef_pumbun_nm'])
+pumbun_cd = list(pumbun_df['bef_pumbun_cd'])
 
 
 
 pattern = '과세$|면세$|[\(].+[\)]|[\[].+[\]]|外|[\,]|[\+\-\_\/]|[\(].+|[\（].+[\）]'
 
-
-re.sub(pattern,'','청과과세')
 
 # 이거의 텍스트를 가지고 첫 번째 인덱스를 추출 해보면 
 
@@ -58,13 +58,14 @@ reg_pumbun_nm = [re.sub(pattern,'',x) for x in reg_pumbun_nm]
 
 
 aft_pumbun_cd = []
-
+aft_pumbun_nm = [] 
 
 
 for t in reg_pumbun_nm:
 
 	idx = reg_pumbun_nm.index(t)
 	aft_pumbun_cd.append(pumbun_cd[idx])
+	aft_pumbun_nm.append(pumbun_nm[idx])
 
 
 
@@ -77,9 +78,11 @@ txt_df = pd.DataFrame(
 	}
 )
 
+
+
 txt_df = txt_df.sort_values('aft_pumbun_cd')
 
-txt_df.to_csv('PUMBUN_CD ???????_2차_정리.csv',index=False,encoding ='euc-kr')
+txt_df.to_csv('PUMBUN_CD.txt',index=False,encoding ='euc-kr')
 
 len(txt_df.aft_pumbun_cd.unique())
 
